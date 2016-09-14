@@ -5,10 +5,8 @@
 void deleteNode( Node * n, int d )
 {
   Node * t;
-  if( ! ( n && n->next ) ){
-    perror("Node not found\n");
-    return;
-  }
+  if( ! ( n && n->next ) )
+    return perror("Node not found\n");
   if( n->next->data != d )
     return deleteNode( n->next, d );
   t = n->next;
@@ -34,7 +32,7 @@ int main()
 
   printf( "length: %d\n", list->length( list ) );
 
-  deleteNode( list, 3);
+  deleteNode( list, 10 );
 
   list->print( list );
 
