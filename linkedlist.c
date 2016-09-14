@@ -1,54 +1,27 @@
+#include "node.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NODE_STR_LEN 64
-
-typedef struct Node {
-  int data;
-  struct Node * next;
-} Node;
-
-Node * newNode( int d )
+void deleteNode( Node * n, int d )
 {
-  Node * n;
-  if( ! (n = malloc( sizeof( Node ) ) ) )
-    perror("Failed to allocate memory for node\n");
-  n->next = NULL;
-  n->data = d;
-  return n;
-}
-
-void addToTail( Node * n, int d )
-{
-  Node * end = newNode( d );
-  while( n->next != NULL )
-    n = n->next;
-  n->next = end;
-}
-
-int length( Node * n )
-{
-  if( n ) 
-    return 1 + length( n->next ) ;
-  return 0;
-}
-
-void nodeToBuf( Node * n, char buf[NODE_STR_LEN] )
-{
-  if( n ){
-    snprintf( buf, 
-        NODE_STR_LEN, 
-        "\033[1;44mnode(\x1b[0m %d \033[1;44m) -> \x1b[0m", 
-        n->data );
-    nodeToBuf( n, buf + NODE_STR_LEN );
+  Node * t;
+  if( ! ( n && n->next ) ){
+    perror("Node not found\n");
+    return;
   }
+  if( n->next->data != d )
+    return deleteNode( n->next, d );
+  t = n->next;
+  n->next = n->next->next;
+  free( t );
 }
 
 int main()
 {
   Node * list;
 
-  list = newNode( 1 );
+  list = newNode( 0 );
+  addToTail( list, 1 );
   addToTail( list, 2 );
   addToTail( list, 3 );
   addToTail( list, 4 );
@@ -59,7 +32,13 @@ int main()
   addToTail( list, 9 );
   addToTail( list, 10 );
 
-  printf( "length: %d\n", length( list ));
+  printf( "length: %d\n", list->length( list ) );
+
+  deleteNode( list, 3);
+
+  list->print( list );
+
+  list->free( list );
 
   return 0;
 }
